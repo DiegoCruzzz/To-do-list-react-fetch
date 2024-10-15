@@ -6,24 +6,44 @@ const TodoList = () => {
   const [tasks, setTasks] = useState([]);
   const [inputValue, setInputValue] = useState('');
 
+  useEffect(() => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'Fetch POST Request Example' })
+    };
+    fetch('https://playground.4geeks.com/todo/users/diegocruzzz', requestOptions)
+        .then(response => response.json())
+        .then(data => console.log(data) );
+
+     fetch('https://playground.4geeks.com/todo/users/diegocruzzz')
+        		.then(response => response.json())
+        		.then(data => {
+					console.log(data.todos);
+					setTasks(data.todos);
+				});
+  }, []);
+
   const handleAddTask = (e) => {
     if (e.key === 'Enter' && inputValue.trim() !== '') {
-      setTasks([...tasks, inputValue]);
-      console.log(inputValue);
-      
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                "label": inputValue,
-                "is_done": false
-             })
-        };
-        fetch('https://playground.4geeks.com/todo/todos/diegocruzzz', requestOptions)
-            .then(response => response.json())
-            .then(data => console.log(data.id));
+      const newTask = { label: inputValue, is_done: false };
 
-     setInputValue('');
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTask),
+      };
+
+      fetch('https://playground.4geeks.com/todo/todos/diegocruzzz', requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log("Post hecho, con id: " + data.id);
+          // Aquí actualizamos el estado con la nueva tarea
+          setTasks(prevTasks => [...prevTasks, newTask]);
+        })
+        .catch(error => console.error('Error al agregar la tarea:', error));
+
+      setInputValue('');
     }
   };
 
@@ -55,7 +75,6 @@ const TodoList = () => {
       body: raw,
       redirect: "follow"
     };
-
     await fetch("https://playground.4geeks.com/todo/users/diegocruzzz", requestOptions)
       .then((response) => response.text())
       .then((result) => console.log(result))
@@ -81,7 +100,7 @@ const TodoList = () => {
       <ul style={{ listStyleType: 'none', padding: '0' }}>
         {tasks.map((task, index) => (
           <li key={index} style={{ position: 'relative', padding: '10px', border: '1px solid black', borderRadius: '4px' }} className="d-flex justify-content-between">
-            <p>{task}</p>
+            <p>{task.label}</p>
             <button onClick={() => handleDeleteTask(index)} className="delete-icon" type="button" class="btn btn-danger">X</button>
           </li>
         ))}
