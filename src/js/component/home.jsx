@@ -7,14 +7,6 @@ const TodoList = () => {
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: 'Fetch POST Request Example' })
-    };
-    fetch('https://playground.4geeks.com/todo/users/diegocruzzz', requestOptions)
-        .then(response => response.json())
-        .then(data => console.log(data) );
 
      fetch('https://playground.4geeks.com/todo/users/diegocruzzz')
         		.then(response => response.json())
